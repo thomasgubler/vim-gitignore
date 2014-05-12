@@ -36,17 +36,16 @@ function s:WildignoreFromGitignore(...)
   let dir_ = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : fnamemodify(expand('%'), ':p:h') . '/'
   let gitignore = dir_ . '.gitignore'
   if filereadable(gitignore)
-    let igstring = []
+    let igstrings = []
     for oline in readfile(gitignore)
       let line = substitute(oline, '\s|\n|\r', '', "g")
       if line =~ '^#' | con | endif
       if line == ''   | con | endif
       if line =~ '^!' | con | endif
-      if line =~ '/$' | call add(igstring, line . "*") | con | endif
-      call add(igstring, line)
+      if line =~ '/$' | call add(igstrings, dir_ . line . "*") | con | endif
+      call add(igstrings, dir_ . line)
     endfor
-    let execstring = "set wildignore+=" . dir_ . join(igstring, ','.dir_)
-    execute execstring
+    if len(igstrings) | execute "set wildignore+=" . join(igstrings, ',') | endif
   endif
 endfunction
 
