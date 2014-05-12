@@ -35,6 +35,7 @@ set cpo&vim
 function s:WildignoreFromGitignore(...)
   let dir_ = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : expand('%:p:h') . '/'
   let gitignore = dir_ . ((a:0 > 1 && !empty(a:2)) ? a:2 : '.gitignore')
+  let wi_ = split(&wildignore, ',')
   if filereadable(gitignore)
     let igstrings = []
     for oline in readfile(gitignore)
@@ -42,8 +43,9 @@ function s:WildignoreFromGitignore(...)
       if line =~ '^#' | con | endif
       if line == ''   | con | endif
       if line =~ '^!' | con | endif
-      if line =~ '/$' | call add(igstrings, dir_ . line . "*") | con | endif
-      call add(igstrings, dir_ . line)
+      if line =~ '/$' | let line .= '*' | endif
+      if index(wi_, line) != -1 | con | endif
+      call add(igstrings, line)
     endfor
     if len(igstrings) | execute "set wildignore+=" . join(igstrings, ',') | endif
   endif
