@@ -33,8 +33,8 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function s:WildignoreFromGitignore(...)
-  let dir_ = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : fnamemodify(expand('%'), ':p:h') . '/'
-  let gitignore = dir_ . '.gitignore'
+  let dir_ = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : expand('%:p:h') . '/'
+  let gitignore = dir_ . ((a:0 > 1 && !empty(a:2)) ? a:2 : '.gitignore')
   if filereadable(gitignore)
     let igstrings = []
     for oline in readfile(gitignore)
@@ -52,7 +52,7 @@ endfunction
 noremap <unique> <script> <Plug>WildignoreFromGitignore <SID>WildignoreFromGitignore
 noremap <SID>WildignoreFromGitignore :call <SID>WildignoreFromGitignore()<CR>
 
-command -nargs=? WildignoreFromGitignore :call <SID>WildignoreFromGitignore(<q-args>)
+command -nargs=* WildignoreFromGitignore :call <SID>WildignoreFromGitignore(<f-args>)
 
 augroup wildignorefromgitignore_fugitive
     autocmd!
