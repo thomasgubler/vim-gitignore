@@ -33,19 +33,19 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function s:WildignoreFromGitignore(...)
-  let gitignore = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : fnamemodify(expand('%'), ':p:h') . '/'
-  let gitignore .= '.gitignore'
+  let dir_ = (a:0 && !empty(a:1)) ? fnamemodify(a:1, ':p') : fnamemodify(expand('%'), ':p:h') . '/'
+  let gitignore = dir_ . '.gitignore'
   if filereadable(gitignore)
-    let igstring = ''
+    let igstring = []
     for oline in readfile(gitignore)
       let line = substitute(oline, '\s|\n|\r', '', "g")
       if line =~ '^#' | con | endif
       if line == ''   | con | endif
       if line =~ '^!' | con | endif
-      if line =~ '/$' | let igstring .= "," . line . "*" | con | endif
-      let igstring .= "," . line
+      if line =~ '/$' | call add(igstring, line . "*") | con | endif
+      call add(igstring, line)
     endfor
-    let execstring = "set wildignore+=".substitute(igstring, '^,', '', "g")
+    let execstring = "set wildignore+=" . dir_ . join(igstring, ','.dir_)
     execute execstring
   endif
 endfunction
