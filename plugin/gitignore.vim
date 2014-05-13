@@ -44,6 +44,7 @@ function s:WildignoreFromGitignore(...)
       if line == ''   | con | endif
       if line =~ '^!' | con | endif
       if line =~ '/$' | let line .= '*' | endif
+      let line = '*/'.line
       if index(wi_, line) != -1 | con | endif
       call add(igstrings, line)
     endfor
