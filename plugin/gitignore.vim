@@ -42,6 +42,7 @@ function s:WildignoreFromGitignore(...)
       let line = substitute(oline, '\s|\n|\r', '', "g")
       if line =~ '^#' | con | endif
       if line == ''   | con | endif
+      if line == '*'   | con | endif
       if line =~ '^!' | con | endif
       if line =~ '/$' | let line .= '*' | endif
       let line = '*/'.line
